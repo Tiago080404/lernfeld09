@@ -45,8 +45,15 @@ ipv6 route 2001:db8:3::/64 fd00::2:2
 ipv6 route 2001:db8:4::/64 fd00::3:2
 
 
-! Und Die ROUTEN ZU DEN VLAN(MUENCHEN)
-ipv6 route 2001:db8:4:10::/64 fd00:0:0:3::2
+! Und Die ROUTEN ZU DEN VLANs()
+
+ipv6 route 2001:db8:1:10::/64 2001:db8:1::2 ! HH VLAN 10 → SW-HH
+ipv6 route 2001:db8:1:20::/64 2001:db8:1::2 ! HH VLAN 20 → SW-HH
+ipv6 route 2001:db8:2:10::/64 fd00:0:0:1::2 ! LUE VLAN 10 → Lübeck
+ipv6 route 2001:db8:2:20::/64 fd00:0:0:1::2 ! LUE VLAN 20 → Lübeck
+ipv6 route 2001:db8:3:10::/64 fd00:0:0:2::2 ! B VLAN 10 → Berlin
+ipv6 route 2001:db8:4:10::/64 fd00:0:0:3::2 ! M VLAN 10 → München
+
 
 end
 write memory
@@ -85,9 +92,17 @@ interface GigabitEthernet0/0/0
  ipv6 enable
  no shutdown
 
-ipv6 route 2001:db8:1::/64 fd00::1:1
+<!-- ipv6 route 2001:db8:1::/64 fd00::1:1
 ipv6 route 2001:db8:3::/64 fd00::4:2
-ipv6 route 2001:db8:4::/64 fd00::5:2
+ipv6 route 2001:db8:4::/64 fd00::5:2 -->
+
+
+ipv6 route 2001:db8:1:10::/64 fd00:0:0:1::1 ! HH VLAN 10 → Hamburg
+ipv6 route 2001:db8:1:20::/64 fd00:0:0:1::1 ! HH VLAN 20 → Hamburg
+ipv6 route 2001:db8:2:10::/64 2001:db8:2::2 ! LUE VLAN 10 → SW-LUE
+ipv6 route 2001:db8:2:20::/64 2001:db8:2::2 ! LUE VLAN 20 → SW-LUE
+ipv6 route 2001:db8:3:10::/64 fd00:0:0:4::2 ! B VLAN 10 → Berlin
+ipv6 route 2001:db8:4:10::/64 fd00:0:0:5::2 ! M VLAN 10 → München
 
 end
 write memory
@@ -125,10 +140,13 @@ interface GigabitEthernet0/0/0
  ipv6 enable
  no shutdown
 
-ipv6 route 2001:db8:1::/64 fd00::2:1
-ipv6 route 2001:db8:2::/64 fd00::4:1
-ipv6 route 2001:db8:4::/64 fd00::6:2
-
+! Alle VLAN ROUTEN
+ipv6 route 2001:db8:1:10::/64 fd00:0:0:2::1 ! HH VLAN 10 → Hamburg
+ipv6 route 2001:db8:1:20::/64 fd00:0:0:2::1 ! HH VLAN 20 → Hamburg
+ipv6 route 2001:db8:2:10::/64 fd00:0:0:4::1 ! LUE VLAN 10 → Lübeck
+ipv6 route 2001:db8:2:20::/64 fd00:0:0:4::1 ! LUE VLAN 20 → Lübeck
+ipv6 route 2001:db8:3:10::/64 2001:db8:3::2 ! B VLAN 10 → SW-B
+ipv6 route 2001:db8:4:10::/64 fd00:0:0:6::2 ! M VLAN 10 → München
 end
 write memory
 ```
@@ -170,8 +188,13 @@ ipv6 route 2001:db8:2::/64 fd00:0:0:5::1
 ipv6 route 2001:db8:3::/64 fd00:0:0:6::1
 
 ! Und Die ROUTEN ZU DEN VLAN(HAMBURG)
-ipv6 route 2001:db8:1:10::/64 fd00:0:0:3::1
-ipv6 route 2001:db8:1:20::/64 fd00:0:0:3::1
+
+ipv6 route 2001:db8:1:10::/64 fd00:0:0:3::1      ! HH VLAN 10 → Hamburg
+ipv6 route 2001:db8:1:20::/64 fd00:0:0:3::1      ! HH VLAN 20 → Hamburg
+ipv6 route 2001:db8:2:10::/64 fd00:0:0:5::1      ! LUE VLAN 10 → Lübeck
+ipv6 route 2001:db8:2:20::/64 fd00:0:0:5::1      ! LUE VLAN 20 → Lübeck
+ipv6 route 2001:db8:3:10::/64 fd00:0:0:6::1      ! B VLAN 10 → Berlin
+ipv6 route 2001:db8:4:10::/64 2001:db8:4::2      ! M VLAN 10 → SW-M
 
 end
 write memory
@@ -604,4 +627,21 @@ Default Gateway: 2001:db8:4:10::1
 ping 2001:db8:4::1        ! zu SW-M-01 Gateway
 ping 2001:db8:4:10::1     ! zu VLAN 10 Gateway
 ping 2001:db8:1:10::10    ! zu Client-HH-01 Hamburg
+```
+
+### Berlin (B) — 1 VLAN
+
+## Server einrichten fuer B:
+
+### Server-B-01
+
+```text
+IPv6 Address:    2001:db8:3:10::10
+Prefix Length:   64
+Default Gateway: 2001:db8:3:10::1
+```
+
+```text
+ping 2001:db8:1:10::10    ! zu Client-HH-01
+ping 2001:db8:4:10::10    ! zu Server-M-01
 ```
