@@ -645,3 +645,48 @@ Default Gateway: 2001:db8:3:10::1
 ping 2001:db8:1:10::10    ! zu Client-HH-01
 ping 2001:db8:4:10::10    ! zu Server-M-01
 ```
+
+
+### ab hier alles auSSer security#
+
+
+
+## Sicherheitskonfiguration für alle Geräte
+```text
+enable
+configure terminal
+
+banner motd #
+***********************************************
+*   Unauthorized access is prohibited!       *
+*   Property of Streamline GmbH              *
+*   Disconnect if not authorized!            *
+***********************************************
+#
+
+enable secret cisco123
+
+line console 0
+ password cisco123
+ login
+
+line vty 0 4
+ password cisco123
+ login
+
+ip domain-name streamline.de
+username admin privilege 15 secret cisco123
+crypto key generate rsa
+! 1024 eingeben
+
+line vty 0 4
+ transport input ssh
+ login local
+
+end
+write memory
+```
+```text
+BSP: ssh auf rt-hh: RT-HH-01#ssh -l admin 2001:db8:1::1
+RT-HH-01#exit
+```
